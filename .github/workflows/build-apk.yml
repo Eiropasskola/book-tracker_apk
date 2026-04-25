@@ -16,24 +16,65 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # Buildozer Action - pārbaudīta, populārākā GitHub Action APK būvei.
-      # Tā izmanto Docker imadzi ar Android SDK + NDK + Buildozer jau preinstalled,
-      # tāpēc nav jāuztraucas par sdkmanager ceļiem, libffi kompilāciju utt.
-      - name: Build Android APK with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v5
         with:
-          command: buildozer android debug
-          buildozer_version: stable
+          python-version: '3.10'
 
-      # Saglabā cache nākamajām būvēm
-      - name: Cache .buildozer
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Sistēmas paketes - PILNS saraksts, kas vajadzīgs Buildozer
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip xz-utils \
+            python3-pip python3-setuptools python3-dev \
+            autoconf automake autopoint libtool libtool-bin \
+            pkg-config gettext \
+            zlib1g-dev libncurses-dev libncursesw5-dev libtinfo-dev \
+            cmake libffi-dev libssl-dev \
+            build-essential ccache \
+            openjdk-17-jdk
+
+      # Cache Buildozer global mape (SDK, NDK, p4a)
+      - name: Cache Buildozer global
+        uses: actions/cache@v4
+        with:
+          path: ~/.buildozer
+          key: buildozer-global-${{ runner.os }}-v2-${{ hashFiles('buildozer.spec') }}
+          restore-keys: |
+            buildozer-global-${{ runner.os }}-v2-
+
+      # Cache lokālo .buildozer mapi
+      - name: Cache Buildozer local
         uses: actions/cache@v4
         with:
           path: .buildozer
-          key: buildozer-cache-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-local-${{ runner.os }}-v2-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
-            buildozer-cache-${{ runner.os }}-
+            buildozer-local-${{ runner.os }}-v2-
+
+      # Pinētas, pārbaudītas Buildozer + Cython versijas
+      - name: Install Buildozer and Cython
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade wheel setuptools
+          pip install buildozer==1.5.0
+          pip install cython==0.29.36
+          pip install virtualenv
+
+      - name: Build Android APK (debug)
+        env:
+          ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
+        run: |
+          # ALWAYS pieņemam SDK licences pirms būves
+          yes | buildozer android update || true
+          buildozer -v android debug 2>&1 | tee build.log
 
       - name: List build artifacts
         if: always()
@@ -42,12 +83,25 @@ jobs:
           ls -la bin/ 2>/dev/null || echo "bin/ neeksistee"
           echo "=== APK faili visur ==="
           find . -name "*.apk" -type f 2>/dev/null || echo "APK netika izveidots"
+          echo "=== Pēdējās 100 rindas no build.log ==="
+          tail -100 build.log 2>/dev/null || echo "build.log neeksistee"
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         if: success()
         with:
           name: BookTracker-APK
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
           retention-days: 30
           if-no-files-found: error
+
+      - name: Upload build log (always)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-log
+          path: |
+            build.log
+            .buildozer/android/platform/build-*/build.log
+          retention-days: 7
+          if-no-files-found: warn
