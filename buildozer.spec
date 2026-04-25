@@ -16,42 +16,37 @@ source.exclude_patterns = license,books.db,*.spec,*.bat,*.zip
 version = 1.0.0
 
 # Atkarības - bez matplotlib! Grafikus zīmējam ar Pillow.
-# python3, kivy ir obligāti pirmie.
 requirements = python3,kivy==2.3.0,kivymd==1.1.1,pillow,requests,certifi,urllib3,charset-normalizer,idna
 
 # Orientācija un izskats
 orientation = portrait
 fullscreen = 0
 
-# Ikona un splash screen (nedefinēts - var pievienot vēlāk)
-# icon.filename = %(source.dir)s/assets/icon.png
-# presplash.filename = %(source.dir)s/assets/presplash.png
-
 # Atļaujas
 android.permissions = INTERNET
 
-# Android API versijas
-android.api = 34
+# Android API versijas - SVARĪGI: konkrētas versijas, ko Buildozer Action atbalsta out-of-the-box
+android.api = 33
 android.minapi = 21
+android.ndk = 25b
 android.ndk_api = 21
 
-# Arhitektūras - sākam tikai ar arm64-v8a, lai būve būtu ātrāka.
-# Vēlāk vari pievienot armeabi-v7a (vecākiem tālruņiem), bet tas dubultos būves laiku.
+# Arhitektūras - tikai arm64-v8a, lai būve būtu 2x ātrāka.
 android.archs = arm64-v8a
 
 # Ļauj backup
 android.allow_backup = True
 
-# Pieņem licences automātiski (vajadzīgs CI vidē)
+# Pieņem licences automātiski
 android.accept_sdk_license = True
 
-# Bootstrap - kā kompilēt
+# Bootstrap
 p4a.bootstrap = sdl2
+
+# p4a fork - jaunākais stabilais
+p4a.branch = master
 
 [buildozer]
 
-# Logu līmenis (2 = INFO, kas ir piemērots CI)
 log_level = 2
-
-# Brīdinājums uz root - izslēgts CI vidē
 warn_on_root = 0
