@@ -1,0 +1,115 @@
+<GoalsScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Lasīšanas mērķi'
+            elevation: 2
+            left_action_items: [['arrow-left', lambda x: app.switch_to('library')]]
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(16)
+                spacing: dp(16)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    id: year_label
+                    text: 'Šī gada mērķis'
+                    font_style: 'H5'
+                    size_hint_y: None
+                    height: dp(40)
+
+                MDCard:
+                    orientation: 'vertical'
+                    padding: dp(16)
+                    spacing: dp(8)
+                    size_hint_y: None
+                    height: dp(140)
+                    elevation: 1
+                    radius: [dp(8)]
+
+                    MDLabel:
+                        text: 'Grāmatas'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        size_hint_y: None
+                        height: dp(24)
+
+                    MDProgressBar:
+                        id: books_progress
+                        value: 0
+                        size_hint_y: None
+                        height: dp(8)
+
+                    MDLabel:
+                        id: books_status
+                        text: '0 / 0 grāmatas'
+                        font_style: 'Caption'
+                        theme_text_color: 'Secondary'
+
+                MDCard:
+                    orientation: 'vertical'
+                    padding: dp(16)
+                    spacing: dp(8)
+                    size_hint_y: None
+                    height: dp(140)
+                    elevation: 1
+                    radius: [dp(8)]
+
+                    MDLabel:
+                        text: 'Lapas'
+                        font_style: 'Subtitle1'
+                        bold: True
+                        size_hint_y: None
+                        height: dp(24)
+
+                    MDProgressBar:
+                        id: pages_progress
+                        value: 0
+                        size_hint_y: None
+                        height: dp(8)
+
+                    MDLabel:
+                        id: pages_status
+                        text: '0 / 0 lapas'
+                        font_style: 'Caption'
+                        theme_text_color: 'Secondary'
+
+                MDLabel:
+                    id: warning_label
+                    text: ''
+                    font_style: 'Body1'
+                    halign: 'center'
+                    size_hint_y: None
+                    height: dp(30)
+
+                MDSeparator:
+                    height: dp(1)
+
+                MDLabel:
+                    text: 'Iestatīt mērķus:'
+                    font_style: 'Subtitle1'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(30)
+
+                MDTextField:
+                    id: target_books_input
+                    hint_text: 'Grāmatu mērķis'
+                    mode: 'rectangle'
+                    input_filter: 'int'
+
+                MDTextField:
+                    id: target_pages_input
+                    hint_text: 'Lapu mērķis (nav obligāti)'
+                    mode: 'rectangle'
+                    input_filter: 'int'
+
+                MDRaisedButton:
+                    text: 'Saglabāt mērķi'
+                    size_hint_x: 1
+                    md_bg_color: app.theme_cls.primary_color
+                    on_release: root.save_goal()

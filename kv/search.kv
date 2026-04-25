@@ -1,0 +1,33 @@
+<SearchScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Meklēt Open Library'
+            elevation: 2
+            left_action_items: [['arrow-left', lambda x: app.switch_to('library')]]
+
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(80)
+            padding: dp(12), dp(8)
+            spacing: dp(8)
+
+            MDTextField:
+                id: search_input
+                hint_text: 'Nosaukums, autors vai ISBN'
+                mode: 'rectangle'
+                on_text_validate: root.do_search()
+
+            MDIconButton:
+                icon: 'magnify'
+                on_release: root.do_search()
+
+        ScrollView:
+            MDBoxLayout:
+                id: results_box
+                orientation: 'vertical'
+                padding: dp(10)
+                spacing: dp(6)
+                size_hint_y: None
+                height: self.minimum_height

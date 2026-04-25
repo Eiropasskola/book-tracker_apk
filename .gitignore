@@ -1,0 +1,48 @@
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+
+# Build artifacts
+build/
+dist/
+bin/
+.buildozer/
+*.spec.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Aplikācijas dati
+books.db
+*.db-journal
+assets/covers/*
+!assets/covers/.gitkeep
+
+# Eksportētie faili
+books_export_*.csv
+books_export_*.json
+
+# Logs
+*.log
+.kivy/
+
+# Testa faili
+test_*.py

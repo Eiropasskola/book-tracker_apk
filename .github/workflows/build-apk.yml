@@ -1,0 +1,100 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Lieto gatavu Docker imedzi ar Buildozer + Android SDK + NDK jau preinstalled.
+    # Tas iztaisa būves laiku no ~60 min uz ~15-20 min un izvairās no SDK problēmām.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Cache: Buildozer global mape (~/.buildozer) - SDK, NDK, p4a
+      - name: Cache Buildozer global
+        uses: actions/cache@v4
+        with:
+          path: ~/.buildozer
+          key: buildozer-global-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          restore-keys: |
+            buildozer-global-${{ runner.os }}-
+
+      # Cache: lokālā .buildozer mape projektā
+      - name: Cache Buildozer local
+        uses: actions/cache@v4
+        with:
+          path: .buildozer
+          key: buildozer-local-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          restore-keys: |
+            buildozer-local-${{ runner.os }}-
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip openjdk-17-jdk \
+            python3-pip autoconf libtool pkg-config \
+            zlib1g-dev libncurses-dev libncursesw5-dev \
+            cmake libffi-dev libssl-dev \
+            build-essential ccache
+
+      - name: Install Buildozer and Cython
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade buildozer
+          pip install "cython<3.0"
+
+      - name: Accept Android SDK licenses
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
+          yes | buildozer android update || true
+
+      - name: Build Android APK (debug)
+        run: |
+          export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+          buildozer -v android debug 2>&1 | tee build.log
+
+      - name: List build artifacts
+        if: always()
+        run: |
+          echo "=== bin/ saturs ==="
+          ls -la bin/ || echo "bin/ neeksistee"
+          echo "=== APK fails ==="
+          find . -name "*.apk" -type f 2>/dev/null || echo "APK netika izveidots"
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: BookTracker-APK
+          path: bin/*.apk
+          retention-days: 30
+
+      - name: Upload build log on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: build-log
+          path: |
+            build.log
+            .buildozer/android/platform/build-*/build.log
+          retention-days: 7

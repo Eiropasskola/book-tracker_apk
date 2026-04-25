@@ -1,0 +1,39 @@
+<LibraryScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Mana bibliotēka'
+            elevation: 2
+            left_action_items: [['cog', lambda x: app.switch_to('settings')]]
+            right_action_items:
+                [['filter-variant', lambda x: root.open_filter_menu(x)], \
+                ['chart-bar', lambda x: app.switch_to('stats')], \
+                ['target', lambda x: app.switch_to('goals')]]
+
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(70)
+            padding: dp(12), dp(8)
+
+            MDTextField:
+                hint_text: 'Meklēt...'
+                mode: 'rectangle'
+                on_text: root.on_search_text(self.text)
+
+        MDFloatLayout:
+            ScrollView:
+                MDBoxLayout:
+                    id: book_list
+                    orientation: 'vertical'
+                    padding: dp(10), dp(4), dp(10), dp(90)
+                    spacing: dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+            MDFloatingActionButton:
+                icon: 'plus'
+                pos_hint: {'right': 0.97, 'y': 0.02}
+                md_bg_color: app.theme_cls.primary_color
+                on_release: root.open_add_options(self)
+                elevation: 4

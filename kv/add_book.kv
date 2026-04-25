@@ -1,0 +1,140 @@
+<AddBookScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            id: top_bar
+            title: 'Pievienot grāmatu'
+            elevation: 2
+            left_action_items: [['arrow-left', lambda x: app.switch_to('library')]]
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(16)
+                spacing: dp(12)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    id: title_label
+                    text: 'Pievienot grāmatu'
+                    font_style: 'H6'
+                    size_hint_y: None
+                    height: dp(30)
+
+                MDTextField:
+                    id: title_input
+                    hint_text: 'Nosaukums *'
+                    mode: 'rectangle'
+
+                MDTextField:
+                    id: author_input
+                    hint_text: 'Autors'
+                    mode: 'rectangle'
+
+                MDTextField:
+                    id: isbn_input
+                    hint_text: 'ISBN'
+                    mode: 'rectangle'
+
+                MDTextField:
+                    id: pages_input
+                    hint_text: 'Lapu skaits'
+                    mode: 'rectangle'
+                    input_filter: 'int'
+
+                MDTextField:
+                    id: genre_input
+                    hint_text: 'Žanrs'
+                    mode: 'rectangle'
+
+                MDLabel:
+                    text: 'Statuss'
+                    font_style: 'Caption'
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDRaisedButton:
+                    id: status_spinner
+                    text: 'Vēlos lasīt'
+                    size_hint_x: 1
+                    on_release: root.open_status_menu(self)
+
+                MDLabel:
+                    text: 'Vērtējums'
+                    font_style: 'Caption'
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDBoxLayout:
+                    size_hint_y: None
+                    height: dp(50)
+                    spacing: dp(4)
+
+                    MDIconButton:
+                        icon: 'star'
+                        on_release: root.set_rating(1)
+                    MDIconButton:
+                        icon: 'star'
+                        on_release: root.set_rating(2)
+                    MDIconButton:
+                        icon: 'star'
+                        on_release: root.set_rating(3)
+                    MDIconButton:
+                        icon: 'star'
+                        on_release: root.set_rating(4)
+                    MDIconButton:
+                        icon: 'star'
+                        on_release: root.set_rating(5)
+                    MDIconButton:
+                        icon: 'close'
+                        on_release: root.set_rating(0)
+
+                    MDLabel:
+                        id: rating_label
+                        text: '☆☆☆☆☆'
+                        font_style: 'H6'
+
+                MDLabel:
+                    text: 'Datumi'
+                    font_style: 'Caption'
+                    size_hint_y: None
+                    height: dp(20)
+
+                MDRaisedButton:
+                    id: started_btn
+                    text: 'Sākuma datums'
+                    size_hint_x: 1
+                    on_release: root.open_started_picker()
+
+                MDRaisedButton:
+                    id: finished_btn
+                    text: 'Beigu datums'
+                    size_hint_x: 1
+                    on_release: root.open_finished_picker()
+
+                MDTextField:
+                    id: notes_input
+                    hint_text: 'Piezīmes'
+                    mode: 'rectangle'
+                    multiline: True
+
+                Widget:
+                    size_hint_y: None
+                    height: dp(10)
+
+                MDRaisedButton:
+                    text: 'Saglabāt'
+                    size_hint_x: 1
+                    md_bg_color: app.theme_cls.primary_color
+                    on_release: root.save_book()
+
+                MDFlatButton:
+                    id: delete_btn
+                    text: 'Dzēst grāmatu'
+                    size_hint_x: 1
+                    theme_text_color: 'Custom'
+                    text_color: 1, 0.3, 0.3, 1
+                    on_release: root.delete_book()
+                    disabled: True

@@ -1,0 +1,89 @@
+<SettingsScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Iestatījumi'
+            elevation: 2
+            left_action_items: [['arrow-left', lambda x: app.switch_to('library')]]
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(16)
+                spacing: dp(16)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    text: 'Izskats'
+                    font_style: 'Subtitle1'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(30)
+
+                MDCard:
+                    orientation: 'horizontal'
+                    padding: dp(16)
+                    size_hint_y: None
+                    height: dp(70)
+                    elevation: 1
+                    radius: [dp(8)]
+
+                    MDLabel:
+                        text: 'Tumšais režīms'
+                        font_style: 'Body1'
+
+                    MDSwitch:
+                        id: theme_switch
+                        on_active: root.toggle_theme(self.active)
+
+                MDSeparator:
+                    height: dp(1)
+
+                MDLabel:
+                    text: 'Datu eksports'
+                    font_style: 'Subtitle1'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(30)
+
+                MDRaisedButton:
+                    text: 'Eksportēt CSV'
+                    size_hint_x: 1
+                    on_release: root.export_csv()
+
+                MDRaisedButton:
+                    text: 'Eksportēt JSON'
+                    size_hint_x: 1
+                    on_release: root.export_json()
+
+                MDLabel:
+                    text: 'Eksportētie faili tiek saglabāti aplikācijas datu mapē.'
+                    font_style: 'Caption'
+                    theme_text_color: 'Hint'
+                    size_hint_y: None
+                    height: dp(40)
+
+                MDSeparator:
+                    height: dp(1)
+
+                MDLabel:
+                    text: 'Par aplikāciju'
+                    font_style: 'Subtitle1'
+                    bold: True
+                    size_hint_y: None
+                    height: dp(30)
+
+                MDLabel:
+                    text: 'Grāmatu izsekotājs v1.0'
+                    font_style: 'Body1'
+                    size_hint_y: None
+                    height: dp(24)
+
+                MDLabel:
+                    text: 'Lokāla aplikācija ar Open Library API'
+                    font_style: 'Caption'
+                    theme_text_color: 'Hint'
+                    size_hint_y: None
+                    height: dp(20)

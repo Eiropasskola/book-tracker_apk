@@ -1,0 +1,18 @@
+<StatsScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: 'Statistika'
+            elevation: 2
+            left_action_items: [['arrow-left', lambda x: app.switch_to('library')]]
+            right_action_items: [['refresh', lambda x: root.refresh()]]
+
+        ScrollView:
+            MDBoxLayout:
+                id: charts_box
+                orientation: 'vertical'
+                padding: dp(10)
+                spacing: dp(10)
+                size_hint_y: None
+                height: self.minimum_height
